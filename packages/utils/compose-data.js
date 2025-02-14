@@ -96,7 +96,7 @@ export default function composeData(
 	}
 
 	if (tag === 'select' && multiple) {
-		values[name] = selectedOptions.map(({ value }) => value); // ⚠️ [1]
+		values[name] = Array.from(selectedOptions).map(({ value }) => value);
 
 		return values;
 	}

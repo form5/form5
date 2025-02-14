@@ -658,10 +658,12 @@ describe('composeData()', () => {
 					optContactMethodPh,
 					optContactMethodTx,
 				],
-				selectedOptions: [
+				// selectedOptions is an HTMLCollection, which has no Array methods
+				// So strip the prototype of the array to better simulate HTMLCollection.
+				selectedOptions: Object.setPrototypeOf([
 					optContactMethodTx,
 					optContactMethodEm,
-				],
+				], null),
 				tagName: 'SELECT',
 				value: optContactMethodEm.value,
 			});
