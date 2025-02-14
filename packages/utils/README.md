@@ -10,12 +10,6 @@
 $ npm i @form5/utils
 ```
 
-OR
-
-```console
-$ npx jsr add @form5/utils
-```
-
 ## Usage
 
 ### `composeData()`

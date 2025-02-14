@@ -17,12 +17,6 @@ This package distributes JSX so you can decide how it gets compiled.
 $ npm i @form5/react
 ```
 
-OR
-
-```console
-$ npx jsr add @form5/react
-```
-
 ```jsx
 import Button from '@form5/react/Button';
 import Field from '@form5/react/Field';
@@ -44,12 +38,6 @@ You can also use the utilities that underpin `<Form>` without the react componen
 
 ```console
 $ npm i @form5/utils
-```
-
-OR
-
-```console
-$ npx jsr add @form5/utils
 ```
 
 ```js
