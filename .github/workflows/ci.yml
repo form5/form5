@@ -68,7 +68,7 @@ jobs:
           format: lcov
           parallel: true
 
-  finish:
+  post-test:
     needs: test
     if: ${{ success() }}
     runs-on: ubuntu-latest
