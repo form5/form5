@@ -653,13 +653,13 @@ describe('composeData()', () => {
 			const fieldContactMethod = new MockField({
 				multiple: true,
 				name: 'contactMethod',
-				options: [
+				// `options` & `selectedOptions` are an HTMLCollection, which has no Array methods
+				// So strip the prototype of the array to better simulate HTMLCollection.
+				options: Object.setPrototypeOf([
 					optContactMethodEm,
 					optContactMethodPh,
 					optContactMethodTx,
-				],
-				// selectedOptions is an HTMLCollection, which has no Array methods
-				// So strip the prototype of the array to better simulate HTMLCollection.
+				], null),
 				selectedOptions: Object.setPrototypeOf([
 					optContactMethodTx,
 					optContactMethodEm,

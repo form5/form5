@@ -1,4 +1,6 @@
-const fields = /** @type {Record<String, Partial<HTMLElement & { elements: MockField[] }>>} */ ({
+/** @typedef {import('./types.d.ts').FormControlElement} FormControlElement */
+
+const fields = /** @type {Record<String, Partial<FormControlElement & { elements: MockField[] }>>} */ ({
 	age: {
 		name: 'age',
 		placeholder: '18',

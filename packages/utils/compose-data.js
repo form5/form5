@@ -19,29 +19,26 @@ const isListName = (name) => listNameRgx.test(name);
 
 /**
  * @typedef {number} Int
- * @typedef {{ [k: string]: Array<number | string> | boolean | FileList | number | string | null |
- * undefined | ComposedData }} ComposedData An object with values cast to the type declared by the
- * field from which the value was derived. Checkboxses and Radios have boolean values.
- */
-/**
+ * @typedef {import('../types.d.ts').ComposedData} ComposedData
+ * @typedef {import('../types.d.ts').FormControlElements} FormControlElements
  * @typedef {HTMLButtonElement&HTMLFieldSetElement&HTMLInputElement&HTMLObjectElement&HTMLOutputElement&HTMLSelectElement&HTMLTextAreaElement} ElementProps
+ * @typedef {import('../types.d.ts').FormControlElement} FormControlElement
  */
 /**
  * Compose (potentially nested) data for all fields within the form.
  *
  * @param {ComposedData} values The accumulator (output) where fields are recorded. If `values`
  * contains `__exclude: true`, then fields that are read-only will be excluded from the output.
- * @param {HTMLButtonElement|HTMLFieldSetElement|HTMLInputElement|HTMLObjectElement|HTMLOutputElement|HTMLSelectElement|HTMLTextAreaElement}
- * element The element currently being processed.
+ * @param {FormControlElement} element The element currently being processed.
  * @param {Int} i The index of the field in the master list of fields.
- * @param {HTMLFormControlsCollection} collection The parent `<form>` element.
+ * @param {HTMLFormControlsCollection} data The parent `<form>` element.
  * @returns {ComposedData}
  */
 export default function composeData(
 	values,
 	element,
 	i,
-	collection,
+	data,
 ) {
 	const tag = FIELD_TAGS[element.tagName];
 
@@ -69,13 +66,13 @@ export default function composeData(
 		{ __proto__: null, ...values, ...(__exclude && { __exclude }) },
 		{ // SyntheticEvent properties must be passed as values (React aggressively destroys references)
 			disabled,
-			elements: /** @type {HTMLFieldSetElement} */ (element).elements,
+			elements: /** @type {HTMLFieldSetElement & { elements: FormControlElements }} */ (element).elements,
 			name,
 			// @ts-ignore
 			readOnly,
 		},
 		i,
-		collection,
+		data,
 	);
 
 	name ||= id;
@@ -126,9 +123,9 @@ export default function composeData(
 /**
  *
  * @param {ComposedData} values The accumulator (values output).
- * @param {HTMLFieldSetElement} fieldset The fieldset.
+ * @param {HTMLFieldSetElement & { elements: FormControlElements }} fieldset The fieldset.
  * @param {number} i The index of the fieldset in the master list of fields.
- * @param {HTMLFormControlsCollection} collection The HTMLCollection converted to an array.
+ * @param {FormControlElement[]} collection The HTMLCollection converted to an array.
  * @returns {ComposedData}
  */
 function handleFieldset(
@@ -149,7 +146,7 @@ function handleFieldset(
 		const nestedFieldCount = elements.length;
 		// Overwrite (break refs) nested fields in master list to avoid double-counting.
 		// Nested fields are listed sequentially after the fieldset within the master list.
-		collection.splice( // ⚠️ [1]
+		collection.splice(
 			i + 1,
 			nestedFieldCount,
 			...Array(nestedFieldCount).fill({ tagName: 'NESTED_FIELD' }),
