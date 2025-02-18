@@ -15,24 +15,37 @@ export { styles as inputClasses };
 
 /**
  * @typedef {import('react')} React
+ * @typedef {import('../../types.d.ts').FormFieldElement} FormFieldElement
  */
 
 /**
- * @typedef {object} FieldProps
- * @property {import('../Button/Button.jsx').Appearance} [FieldProps.appearance=Button.APPEARANCES.PRIMARY]
- * @property {Arrangement} [FieldProps.arrangement=Field.ARRANGEMENTS.INLINE]
- * @property {React.ElementType} [FieldProps.as='input'] The element to render.
- * @property {boolean} [FieldProps.fluid] Whether the field should fill its container.
- * @property {React.ReactNode} FieldProps.label
- * @property {HTMLInputElement['name']} FieldProps.name
- * @property {(event: React.FocusEvent<HTMLInputElement|HTMLSelectElement|HTMLTextAreaElement>) => void} [FieldProps.onBlur]
- * @property {(change: { id: string, name: string, value: boolean | number | string }, event: React.ChangeEvent<HTMLInputElement|HTMLSelectElement|HTMLTextAreaElement>) => void} [FieldProps.onChange]
- * @property {Record<HTMLOptionElement['value'], React.ReactNode>} [FieldProps.options]
- * @property {Variant} [FieldProps.variant]
+ * @typedef {object} FieldOwnProps
+ * @property {import('../Button/Button.jsx').Appearance} [FieldOwnProps.appearance=Button.APPEARANCES.PRIMARY]
+ * @property {Arrangement} [FieldOwnProps.arrangement=Field.ARRANGEMENTS.INLINE]
+ * @property {'input'|'select'|'textarea'} [FieldOwnProps.as='input'] The element to render.
+ * @property {boolean} [FieldOwnProps.fluid] Whether the field should fill its container.
+ * @property {React.ReactNode} FieldOwnProps.label
+ * @property {HTMLInputElement['name']} FieldOwnProps.name
+ * @property {(event: React.FocusEvent<FormFieldElement>) => void} [FieldOwnProps.onBlur]
+ * @property {(change: { id: string, name: string, value: boolean | number | string }, event: React.ChangeEvent<FormFieldElement>) => void} [FieldOwnProps.onChange]
+ * @property {Record<HTMLOptionElement['value'], React.ReactNode>} [FieldOwnProps.options]
+ * @property {boolean} [FieldOwnProps.readOnly]
+ * @property {Variant} [FieldOwnProps.variant]
  */
 
+/** @typedef {FieldOwnProps & Omit<FormFieldElement, 'onChange'>} FieldProps<> */
+
 /**
- * @param {FieldProps & Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange'>} props
+	* @typedef {FieldOwnProps['as'] extends 'input'
+  *   ? HTMLInputElement
+  *   : FieldOwnProps['as'] extends 'select'
+  *     ? HTMLSelectElement
+  *     : HTMLTextAreaElement
+  * } FieldElement
+  */
+
+/**
+ * @param {FieldProps} props
  */
 export default function Field({
 	appearance = Button.APPEARANCES.PRIMARY,
@@ -62,63 +75,62 @@ export default function Field({
 
 	id ||= name;
 
-	if (options) others.list = `${name}_options`;
-	if (Tag === 'textarea') others.rows ??= 3;
-	if (Tag !== 'input') type = null;
-	if (type === 'search') fluid ??= true;
-	if (others.value === null) others.value = ''; // React has a tantrum when `value` is `null`
+	const props = {
+		...others,
+		...(options && { list: `${name}_options` }),
+		...(Tag === 'textarea' && !('rows' in others) && { rows: 3 }),
+		...(Tag !== 'input' && { type: null }),
+		...(type === 'search' && !('fluid' in others) && { fluid: true }),
+		...(others.value === null && { value: '' }), // React has a tantrum when `value` is `null`
+		/** @type {React.FocusEventHandler<FormFieldElement>} */
+		onBlur(e) {
+			if (readOnly) return;
+
+			is.onBlur(e);
+
+			onBlur?.(e);
+
+			if (e.target.checkValidity()) setError('');
+		},
+		/** @type {React.ChangeEventHandler<FieldElement>} */
+		onChange(e) {
+			if (readOnly) {
+				// ! Contrary to what anyone would want, `readonly` does NOT affect checkboxes or radio buttons
+				// ! because `readonly` prevents `value` being changed, they use `checked` not  `value`.
+				e.preventDefault();
+				// These stop*Propagations are necessary to prevent <Form> pristine/touched being updated
+				e.stopPropagation(); // Prevent other handlers registered via React being called
+				e.nativeEvent.stopImmediatePropagation(); // Prevent other handlers registered not via React being called
+				return;
+			}
+
+			is.onChange(e);
+
+			let {
+				checked,
+				id,
+				name,
+				type,
+			} = e.target;
+			const value = type === 'checkbox'
+				? checked
+				: ''+(options?.[e.target.value] ?? e.target.value);
+
+			onChange?.({
+				id,
+				name,
+				value,
+			}, e);
+
+			if (isInvalid && e.target.checkValidity()) setError('');
+		},
+	};
 
 	const isButton = buttonVariants.has(variant);
 	const isSwitch = switchTypes.has(type);
 	const isSearch = type === "search";
 
 	if (isSearch) arrangement = Field.ARRANGEMENTS.COMPACT;
-
-	/**
-	 * @type {React.FocusEventHandler<HTMLInputElement>}
-	 */
-	others.onBlur = (e) => {
-		if (readOnly) return;
-
-		is.onBlur(e);
-
-		onBlur?.(e);
-
-		if (e.target.checkValidity()) setError('');
-	};
-
-	/**
-	 * @type {React.FocusEventHandler<HTMLInputElement>}
-	 */
-	others.onChange = (e) => {
-		if (readOnly) {
-			// ! Contrary to what anyone would want, `readonly` does NOT affect checkboxes or radio buttons
-			// ! because `readonly` prevents `value` being changed, they use `checked` not  `value`.
-			e.preventDefault();
-			// These stop*Propagations are necessary to prevent <Form> pristine/touched being updated
-			e.stopPropagation(); // Prevent other handlers registered via React being called
-			e.nativeEvent.stopImmediatePropagation(); // Prevent other handlers registered not via React being called
-			return false;
-		}
-
-		is.onChange();
-
-		let {
-			checked,
-			id,
-			name,
-			type,
-		} = e.target;
-		const value = type === 'checkbox' ? checked : ''+(options?.[e.target.value] ?? e.target.value);
-
-		onChange?.({
-			id,
-			name,
-			value,
-		}, e);
-
-		if (isInvalid && e.target.checkValidity()) setError('');
-	};
 
 	return (
 		<div
@@ -144,13 +156,13 @@ export default function Field({
 				onInvalid={(e) => {
 					e.nativeEvent.stopImmediatePropagation();
 					setError(e.target.validationMessage);
-					is.onInvalid();
+					is.onInvalid(e);
 				}}
 				readOnly={readOnly}
 				required={required}
 				type={type}
 				variant={variant}
-				{...others}
+				{...props}
 			/>
 
 			{isSearch && (
@@ -158,7 +170,7 @@ export default function Field({
 					<Button
 						appearance={Button.APPEARANCES.BASIC}
 						className={styles.SearchSubmit}
-						disabled={others.disabled}
+						disabled={props.disabled}
 						readOnly={readOnly}
 						type={Button.TYPES.SUBMIT}
 						variant={Button.VARIANTS.GLYPH}
@@ -169,7 +181,7 @@ export default function Field({
 					<Button
 						appearance={Button.APPEARANCES.BASIC}
 						className={styles.SearchReset}
-						disabled={others.disabled}
+						disabled={props.disabled}
 						readOnly={readOnly}
 						type={Button.TYPES.RESET}
 						variant={Button.VARIANTS.GLYPH}
@@ -209,7 +221,7 @@ export default function Field({
 			)}
 
 			{!_isEmpty(options) && (
-				<datalist data-testid={others.list} id={others.list}>{_map(options, (label, key) => (
+				<datalist data-testid={props.list} id={props.list}>{_map(options, (label, key) => (
 					<option key={key} value={key}>{label}</option>
 				))}</datalist>
 			)}

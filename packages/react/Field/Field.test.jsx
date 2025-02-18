@@ -307,7 +307,7 @@ describe('<Field>', () => {
 						id="bar"
 						label={labelText}
 						name="foo"
-						onChange={(...args) => onChangeCalled = true}
+						onChange={() => onChangeCalled = true}
 						readOnly
 					/>
 				)
@@ -324,10 +324,10 @@ describe('<Field>', () => {
 					target: { value },
 				});
 
-				equal(onChangeCalled, undefined);
-				equal(preventDefaultCalled, undefined);
-				equal(stopImmediatePropagationCalled, undefined);
-				equal(stopPropagationCalled, undefined);
+				equal(onChangeCalled, undefined, 'onChange called');
+				equal(preventDefaultCalled, undefined, 'preventDefault called');
+				equal(stopImmediatePropagationCalled, undefined, 'stopImmediatePropagation called');
+				equal(stopPropagationCalled, undefined, 'stopPropagation called');
 			});
 		});
 	});

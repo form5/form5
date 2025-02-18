@@ -2,6 +2,7 @@ import { useState } from 'react';
 
 
 /**
+ * @typedef {import('../../types.d.ts').FormFieldElement} FormFieldElement
  * @typedef {''|null} BooleanAttribute
  */
 
@@ -19,9 +20,15 @@ export function useInteractiveStates({
 	const [pristine, setPristine] = useState(/** @type {BooleanAttribute} */ (''));
 	const [touched, setTouched] = useState(/** @type {BooleanAttribute} */ (null));
 
-	const onBlur = (/** @type {FocusEvent} */ e) => {
+	/**
+	 * @type {React.FocusEventHandler<FormFieldElement>}
+	 */
+	const onBlur = (e) => {
 		if (touched !== '') { setTouched('') }
 	};
+	/**
+	 * @type {React.ChangeEventHandler<FormFieldElement>}
+	 */
 	const onChange = () => {
 		if (touched !== '') { setTouched('') }
 		if (pristine !== null) {
@@ -29,9 +36,15 @@ export function useInteractiveStates({
 			onDirty?.(true);
 		}
 	};
+	/**
+	 * @type {React.FormEventHandler<FormFieldElement>}
+	 */
 	const onInvalid = () => {
 		if (touched !== '') { setTouched('') }
 	};
+	/**
+	 * @type {React.FormEventHandler}
+	 */
 	const onSubmit = () => {
 		setTouched(null);
 		setPristine('');

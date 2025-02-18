@@ -1,11 +1,15 @@
+export type FormFieldElement = (
+	| HTMLInputElement
+	| HTMLSelectElement
+	| HTMLTextAreaElement
+);
+
 export type FormControlElement = (
 	  HTMLButtonElement
 	| HTMLFieldSetElement
-	| HTMLInputElement
 	| HTMLObjectElement
 	| HTMLOutputElement
-	| HTMLSelectElement
-	| HTMLTextAreaElement
+	| FormFieldElement
 );
 
 export type FormControlElements = HTMLCollectionOf<FormControlElement>;
