@@ -2,7 +2,7 @@ import { useState } from 'react';
 
 
 /**
- * @typedef {import('../../types.d.ts').FormFieldElement} FormFieldElement
+ * @typedef {import('../../common.d.ts').FormFieldElement} FormFieldElement
  * @typedef {''|null} BooleanAttribute
  */
 
@@ -21,9 +21,9 @@ export function useInteractiveStates({
 	const [touched, setTouched] = useState(/** @type {BooleanAttribute} */ (null));
 
 	/**
-	 * @type {React.FocusEventHandler<FormFieldElement>}
+	 * @type {React.FocusEventHandler<FormFieldElement | HTMLFormElement>}
 	 */
-	const onBlur = (e) => {
+	const onBlur = () => {
 		if (touched !== '') { setTouched('') }
 	};
 	/**

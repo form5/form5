@@ -15,7 +15,7 @@ export { styles as inputClasses };
 
 /**
  * @typedef {import('react')} React
- * @typedef {import('../../types.d.ts').FormFieldElement} FormFieldElement
+ * @typedef {import('../../common.d.ts').FormFieldElement} FormFieldElement
  */
 
 /**
@@ -33,16 +33,7 @@ export { styles as inputClasses };
  * @property {Variant} [FieldOwnProps.variant]
  */
 
-/** @typedef {FieldOwnProps & Omit<FormFieldElement, 'onChange'>} FieldProps<> */
-
-/**
-	* @typedef {FieldOwnProps['as'] extends 'input'
-  *   ? HTMLInputElement
-  *   : FieldOwnProps['as'] extends 'select'
-  *     ? HTMLSelectElement
-  *     : HTMLTextAreaElement
-  * } FieldElement
-  */
+/** @typedef {FieldOwnProps & Omit<FormFieldElement, 'onChange'>} FieldProps */
 
 /**
  * @param {FieldProps} props

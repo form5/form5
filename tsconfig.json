@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "allowArbitraryExtensions": true,
+    "allowImportingTsExtensions": true,
     "allowJs": true,
     "checkJs": true,
     "declaration": true,
@@ -15,4 +16,5 @@
     "target": "ESNext"
   },
   "include": ["./packages"],
+  "exclude": ["**/*.spec.*s", "**/*.test.*sx"],
 }

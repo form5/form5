@@ -1,4 +1,4 @@
-/** @typedef {import('./types.d.ts').FormControlElement} FormControlElement */
+/** @typedef {import('./common.d.ts').FormControlElement} FormControlElement */
 
 const fields = /** @type {Record<String, Partial<FormControlElement & { elements: MockField[] }>>} */ ({
 	age: {

@@ -19,10 +19,10 @@ const isListName = (name) => listNameRgx.test(name);
 
 /**
  * @typedef {number} Int
- * @typedef {import('../types.d.ts').ComposedData} ComposedData
- * @typedef {import('../types.d.ts').FormControlElements} FormControlElements
+ * @typedef {import('../common.d.ts').ComposedData} ComposedData
+ * @typedef {import('../common.d.ts').FormControlElements} FormControlElements
  * @typedef {HTMLButtonElement&HTMLFieldSetElement&HTMLInputElement&HTMLObjectElement&HTMLOutputElement&HTMLSelectElement&HTMLTextAreaElement} ElementProps
- * @typedef {import('../types.d.ts').FormControlElement} FormControlElement
+ * @typedef {import('../common.d.ts').FormControlElement} FormControlElement
  */
 /**
  * Compose (potentially nested) data for all fields within the form.

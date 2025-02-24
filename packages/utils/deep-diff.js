@@ -5,7 +5,7 @@ import _isObject from 'lodash-es/isObject.js';
 
 
 /**
- * @typedef {import('../types.d.ts').ComposedData} ComposedData
+ * @typedef {import('../common.d.ts').ComposedData} ComposedData
  */
 /**
  * @param {*} oldVals

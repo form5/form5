@@ -7,6 +7,9 @@ import { useInteractiveStates } from './use-interactive-states.js';
 
 
 describe('useInteractiveStates()', () => {
+	/**
+	 * @param {Parameters<typeof useInteractiveStates>[0] & Record<string, unknown>} param0
+	 */
 	function TestComponent({
 		onDirty,
 		onPristine,
@@ -23,18 +26,20 @@ describe('useInteractiveStates()', () => {
 	}
 
 	it('should initially mark the field pristine and untouched', () => {
-		const { container: { firstChild: field } } = render(
+		const { container: { firstChild } } = render(
 			<TestComponent name="foo" />
 		);
+		const field = /** @type {HTMLElement} */ (firstChild);
 
 		equal(field.hasAttribute('pristine'), true, 'pristine');
 		equal(field.hasAttribute('touched'), false, 'touched');
 	});
 
 	it('should mark the field "touched" AFTER the first time it becomes active/focused', () => {
-		const { container: { firstChild: field } } = render(
+		const { container: { firstChild } } = render(
 			<TestComponent name="foo" />
 		);
+		const field = /** @type {HTMLElement} */ (firstChild);
 
 		fireEvent.blur(field);
 
@@ -43,9 +48,10 @@ describe('useInteractiveStates()', () => {
 	});
 
 	it('should remove "pristine" as soon as the field value changes (and mark it "touched")', () => {
-		const { container: { firstChild: field } } = render(
+		const { container: { firstChild } } = render(
 			<TestComponent name="foo" />
 		);
+		const field = /** @type {HTMLElement} */ (firstChild);
 
 		fireEvent.change(field, { target: { value: 'bar' } });
 
@@ -54,9 +60,10 @@ describe('useInteractiveStates()', () => {
 	});
 
 	it('should mark the field touched if it is not already and becomes invalid', () => {
-		const { container: { firstChild: field } } = render(
+		const { container: { firstChild } } = render(
 			<TestComponent required name="foo" />
 		);
+		const field = /** @type {HTMLElement} */ (firstChild);
 
 		fireEvent.invalid(field);
 
@@ -70,13 +77,14 @@ describe('useInteractiveStates()', () => {
 			function onDirty(...args) { calls.set('onDirty', args); }
 			function onPristine(...args) { calls.set('onPristine', args); }
 
-			const { container: { firstChild: field } } = render(
+			const { container: { firstChild } } = render(
 				<TestComponent
 					name="foo"
 					onDirty={onDirty}
 					onPristine={onPristine}
 				/>
 			);
+			const field = /** @type {HTMLElement} */ (firstChild);
 
 			fireEvent.change(field, { target: { value: 'bar' } });
 

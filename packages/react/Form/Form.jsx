@@ -15,15 +15,9 @@ export { styles as formClasses };
 
 /**
  * @typedef {import('react')} React
- */
-
-/**
  * @typedef {import('@form5/utils/composeData').ComposedData} ComposedData
- */
-/**
+ * @typedef {import('../../common.d.ts').FormFieldElement} FormFieldElement
  * @typedef {React.FormEvent<HTMLFormElement>} SubmitEvent
- */
-/**
  * @typedef {React.FormEvent<HTMLFormElement>} ResetEvent
  */
 /**
@@ -73,12 +67,13 @@ export function Form({
 				// We only care when the blur bubbled from a field
 				if (e.target.form === formElm.current) is.onBlur(e);
 			}}
+			// @ts-ignore The difference doesn't matter
 			onChange={is.onChange}
 			onReset={(e) => {
 				props.onReset?.(e);
 				// After everything has succeeded
 				initValues.current = { __proto__: null };
-				is.onSubmit();
+				is.onSubmit(e);
 			}}
 			onSubmit={(e) => {
 				onSubmit(e, initValues, props.onSubmit);
@@ -113,12 +108,12 @@ export default memo(Form);
 export function onSubmit(event, initValues, cb) {
 	event.preventDefault();
 
-	if (!event.target.reportValidity()) return;
+	if (!event.currentTarget.reportValidity()) return;
 
 	event.stopPropagation();
 
 	const all = _reduce(
-		Array.from(event.target.elements),
+		Array.from(event.currentTarget.elements),
 		composeData,
 		{ __proto__: null },
 	);
