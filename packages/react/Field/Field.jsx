@@ -19,21 +19,37 @@ export { styles as inputClasses };
  */
 
 /**
- * @typedef {object} FieldOwnProps
- * @property {import('../Button/Button.jsx').Appearance} [FieldOwnProps.appearance=Button.APPEARANCES.PRIMARY]
- * @property {Arrangement} [FieldOwnProps.arrangement=Field.ARRANGEMENTS.INLINE]
- * @property {'input'|'select'|'textarea'} [FieldOwnProps.as='input'] The element to render.
- * @property {boolean} [FieldOwnProps.fluid] Whether the field should fill its container.
- * @property {React.ReactNode} FieldOwnProps.label
- * @property {HTMLInputElement['name']} FieldOwnProps.name
- * @property {(event: React.FocusEvent<FormFieldElement>) => void} [FieldOwnProps.onBlur]
- * @property {(change: { id: string, name: string, value: boolean | number | string }, event: React.ChangeEvent<FormFieldElement>) => void} [FieldOwnProps.onChange]
- * @property {Record<HTMLOptionElement['value'], React.ReactNode>} [FieldOwnProps.options]
- * @property {boolean} [FieldOwnProps.readOnly]
- * @property {Variant} [FieldOwnProps.variant]
+ * @typedef {object} Change
+ * @prop {string} id
+ * @prop {string} name
+ * @prop {boolean | number | string} value
+ */
+/**
+ * @template E
+ * @callback OnChange
+ * @param {Change} change
+ * @param {React.ChangeEvent<E>} event
+ * @returns {void}
  */
 
-/** @typedef {FieldOwnProps & Omit<FormFieldElement, 'onChange'>} FieldProps */
+/**
+ * @template {'input' | 'select' | 'textarea'} [T='input']
+ * @template [E=T extends 'input' ? HTMLInputElement : T extends 'select' ? HTMLSelectElement : T extends 'textarea' ? HTMLTextAreaElement : never]
+ * @typedef {object} FieldOwnProps
+ * @prop {T} [FieldOwnProps.as='input']
+ * @prop {import('../Button/Button.jsx').Appearance} [FieldOwnProps.appearance=Button.APPEARANCES.PRIMARY]
+ * @prop {Arrangement} [FieldOwnProps.arrangement=Field.ARRANGEMENTS.INLINE]
+ * @prop {boolean} [FieldOwnProps.fluid]
+ * @prop {React.ReactNode} FieldOwnProps.label
+ * @prop {string} FieldOwnProps.name
+ * @prop {React.FocusEventHandler<E>} [FieldOwnProps.onBlur]
+ * @prop {OnChange<E>} [FieldOwnProps.onChange]
+ * @prop {Record<HTMLOptionElement['value'], React.ReactNode>} [FieldOwnProps.options]
+ * @prop {boolean} [FieldOwnProps.readOnly]
+ * @prop {Variant} [FieldOwnProps.variant]
+ */
+
+/** @typedef {FieldOwnProps & FormFieldElement} FieldProps */
 
 /**
  * @param {FieldProps} props
@@ -66,14 +82,19 @@ export default function Field({
 
 	id ||= name;
 
+	/**
+	 * @typedef {FieldProps['as'] extends 'input' ? HTMLInputElement : FieldProps['as'] extends 'select' ? HTMLSelectElement : HTMLTextAreaElement} FieldElement
+	 */
+
 	const props = {
 		...others,
 		...(options && { list: `${name}_options` }),
+		// @ts-ignore
 		...(Tag === 'textarea' && !('rows' in others) && { rows: 3 }),
 		...(Tag !== 'input' && { type: null }),
 		...(type === 'search' && !('fluid' in others) && { fluid: true }),
 		...(others.value === null && { value: '' }), // React has a tantrum when `value` is `null`
-		/** @type {React.FocusEventHandler<FormFieldElement>} */
+		/** @type {React.FocusEventHandler<FieldElement>} */
 		onBlur(e) {
 			if (readOnly) return;
 
@@ -87,7 +108,7 @@ export default function Field({
 		onChange(e) {
 			if (readOnly) {
 				// ! Contrary to what anyone would want, `readonly` does NOT affect checkboxes or radio buttons
-				// ! because `readonly` prevents `value` being changed, they use `checked` not  `value`.
+				// ! because `readonly` prevents `value` being changed, and they use `checked` not `value`.
 				e.preventDefault();
 				// These stop*Propagations are necessary to prevent <Form> pristine/touched being updated
 				e.stopPropagation(); // Prevent other handlers registered via React being called
@@ -117,6 +138,7 @@ export default function Field({
 		},
 	};
 
+	// @ts-ignore `has` is specifically checking whether it's applicable 🙄
 	const isButton = buttonVariants.has(variant);
 	const isSwitch = switchTypes.has(type);
 	const isSearch = type === "search";
@@ -146,7 +168,7 @@ export default function Field({
 				id={id}
 				onInvalid={(e) => {
 					e.nativeEvent.stopImmediatePropagation();
-					setError(e.target.validationMessage);
+					setError(e.currentTarget.validationMessage);
 					is.onInvalid(e);
 				}}
 				readOnly={readOnly}

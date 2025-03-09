@@ -1,5 +1,3 @@
-export type FormFieldTagName = 'input' | 'select' | 'textarea';
-
 export type FormFieldElement = (
 	| HTMLInputElement
 	| HTMLSelectElement
