@@ -16,5 +16,5 @@
     "target": "ESNext"
   },
   "include": ["./packages"],
-  "exclude": ["**/*.spec.*s", "**/*.test.*sx"],
+  "exclude": ["**/*.spec.*s", "**/*.test.*sx", "**/*.fixture.*s"],
 }
