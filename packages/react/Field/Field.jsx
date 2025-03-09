@@ -15,6 +15,9 @@ export { styles as inputClasses };
 
 /**
  * @typedef {import('react')} React
+ * @typedef {import('react').InputHTMLAttributes} InputHTMLAttributes
+ * @typedef {import('react').SelectHTMLAttributes} SelectHTMLAttributes
+ * @typedef {import('react').TextareaHTMLAttributes} TextareaHTMLAttributes
  * @typedef {import('../../common.d.ts').FormFieldElement} FormFieldElement
  */
 
@@ -49,7 +52,7 @@ export { styles as inputClasses };
  * @prop {Variant} [FieldOwnProps.variant]
  */
 
-/** @typedef {FieldOwnProps & FormFieldElement} FieldProps */
+/** @typedef {FieldOwnProps & (InputHTMLAttributes|SelectHTMLAttributes|TextareaHTMLAttributes)} FieldProps */
 
 /**
  * @param {FieldProps} props
