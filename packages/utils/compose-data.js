@@ -2,8 +2,6 @@ import _isArray from 'lodash-es/isArray.js';
 import _reduce from 'lodash-es/reduce.js';
 
 
-// [1] TS is wrong, but idk why. DO NOT wrap in Array.from()
-
 /**
  * @typedef {typeof FIELD_TAGS[keyof typeof FIELD_TAGS]} FieldTag
  */
