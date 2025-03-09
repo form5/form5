@@ -20,8 +20,8 @@ const isListName = (name) => listNameRgx.test(name);
  * @typedef {number} Int
  * @typedef {import('../common.d.ts').ComposedData} ComposedData
  * @typedef {import('../common.d.ts').FormControlElements} FormControlElements
- * @typedef {HTMLButtonElement&HTMLFieldSetElement&HTMLInputElement&HTMLObjectElement&HTMLOutputElement&HTMLSelectElement&HTMLTextAreaElement} ElementProps
  * @typedef {import('../common.d.ts').FormControlElement} FormControlElement
+ * @typedef {import('../common.d.ts').FormFieldElement} FormFieldElement
  */
 /**
  * Compose (potentially nested) data for all fields within the form.
@@ -39,23 +39,18 @@ export default function composeData(
 	i,
 	data,
 ) {
-	const tag = FIELD_TAGS[element.tagName];
+	const { tagName } = element;
+	const tag = /** @type {FieldTag|undefined} */ (FIELD_TAGS[tagName]);
 
 	if (!tag) return values; // Ignore buttons etc & redundant fields
 
 	let {
-		checked,
-		// @ts-ignore The error is incorrect: dataTransfer exists on input[type="file"]
-		dataTransfer,
 		disabled,
-		files,
 		id,
-		multiple,
 		name,
-		selectedOptions,
 		type,
 		value,
-	} = /** @type {ElementProps} */ (element);
+	} = /** @type {FormFieldElement} */ (element);
 
 	const readOnly = element.hasAttribute('readonly');
 	const { __exclude } = values;
@@ -91,10 +86,28 @@ export default function composeData(
 		return values;
 	}
 
-	if (tag === 'select' && multiple) {
-		values[name] = Array.from(selectedOptions).map(({ value }) => value);
+	if (tag === 'select') {
+		const { multiple, selectedOptions } = /** @type {HTMLSelectElement} */ (element);
+		if (multiple) {
+			values[name] = Array.from(selectedOptions).map(({ value }) => value);
 
-		return values;
+			return values;
+		}
+	}
+
+	/** @type {HTMLInputElement['checked'] | undefined} */
+	let checked;
+	/** @type {DataTransfer} */
+	let dataTransfer;
+	/** @type {HTMLInputElement['files'] | undefined} */
+	let files;
+	if (tag === 'input') {
+		({
+			checked,
+			// @ts-ignore it exists on Input[type=file]
+			dataTransfer,
+			files,
+		} = /** @type {HTMLInputElement} */ (element));
 	}
 
 	const val = getFieldVal({
