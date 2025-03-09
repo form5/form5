@@ -13,6 +13,7 @@ export const FIELD_TAGS = /** @type {const} */ ({
 });
 
 const listNameRgx = /\[\d*\]$/;
+/** @type {(name: string) => boolean} */
 const isListName = (name) => listNameRgx.test(name);
 
 /**
