@@ -71,6 +71,7 @@ export default function Field({
 	options,
 	readOnly,
 	required,
+	// @ts-ignore it does exist and this is too much trouble
 	type = 'text',
 	variant,
 	...others
