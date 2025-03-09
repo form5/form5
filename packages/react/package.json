@@ -55,11 +55,11 @@
     "test": "NODE_ENV=test node --no-warnings --import ../../test/register.js --import ../../test/globals.mock.js --require global-jsdom/register --test --test-coverage-include='**/*.jsx' --test-coverage-exclude='**/*.test.jsx' '*/*.test.jsx'"
   },
   "dependencies": {
-    "@form5/utils": "~4.0.0"
+    "@form5/utils": "^4.0.0"
   },
   "devDependencies": {
-    "@nodejs-loaders/css-module": "~1.0.1",
-    "@nodejs-loaders/tsx": "~1.0.2",
+    "@nodejs-loaders/css-module": "^1.1.0",
+    "@nodejs-loaders/tsx": "^1.1.1",
     "@testing-library/react": "^14.0.0",
     "esbuild": "*",
     "global-jsdom": "^9.0.1",
