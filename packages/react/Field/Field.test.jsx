@@ -227,7 +227,7 @@ describe('<Field>', () => {
 
 				const field = getByLabelText(labelText);
 
-				equal(field.rows, 3);
+				equal(+field.rows, 3); // https://github.com/capricorn86/happy-dom/issues/1769
 			});
 		});
 	});

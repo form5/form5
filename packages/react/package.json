@@ -52,18 +52,17 @@
     "./package.json": "./package.json"
   },
   "scripts": {
-    "test": "NODE_ENV=test node --no-warnings --import ../../test/register.js --import ../../test/globals.mock.js --require global-jsdom/register --test --test-coverage-include='**/*.jsx' --test-coverage-exclude='**/*.test.jsx' '*/*.test.jsx'"
+    "test": "NODE_ENV=test node --no-warnings --import ../../test/register.js --import ../../test/globals.mock.js --import ./dom.setup.js --test --test-coverage-include='**/*.jsx' --test-coverage-exclude='**/*.test.jsx' '*/*.test.jsx'"
   },
   "dependencies": {
     "@form5/utils": "^4.0.0"
   },
   "devDependencies": {
+    "@happy-dom/global-registrator": "^17.4.3",
     "@nodejs-loaders/css-module": "^1.1.0",
     "@nodejs-loaders/tsx": "^1.1.1",
     "@testing-library/react": "^14.0.0",
     "esbuild": "*",
-    "global-jsdom": "^9.0.1",
-    "jsdom": "^22.1.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
