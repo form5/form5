@@ -1,1 +1,1 @@
-{"version":3,"file":"useInteractiveStates.d.ts","sourceRoot":"","sources":["useInteractiveStates.js"],"names":[],"mappings":"AAcA;yBALqB,IAAI,KAAK,IAAI;4BACb,KAAK,KAAK,IAAI;;gBAWP,UAAU;;;;;;EA2BrC;+BA5CY,EAAE,GAAC,IAAI"}
+{"version":3,"file":"useInteractiveStates.d.ts","sourceRoot":"","sources":["useInteractiveStates.js"],"names":[],"mappings":"AAcA,gEALG;IAA2C,OAAO,cAAhC,IAAI,KAAK,IAAI;IACa,UAAU,cAApC,KAAK,KAAK,IAAI;CAChC;gBAUyB,UAAU;;;;;;EA2BrC;+BA5CY,EAAE,GAAC,IAAI"}

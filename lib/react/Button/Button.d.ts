@@ -1,4 +1,4 @@
-declare function Button({ appearance, children: label, className, fluid, icon: Icon, type, variant, ...others }: ButtonProps & import("react").BaseHTMLAttributes<any>): JSX.Element;
+declare function Button({ appearance, children: label, className, fluid, type, variant, ...others }: ButtonProps & import("react").BaseHTMLAttributes<any>): JSX.Element;
 declare namespace Button {
     let displayName: "Form5Button";
     namespace APPEARANCES {
@@ -17,7 +17,7 @@ declare namespace Button {
         let CTA: "cta";
         let GLYPH: "glyph";
     }
-    function Group({ className, ...props }: import("../Group/Group.jsx").GroupProps & import("react").HTMLAttributes<HTMLElement>): JSX.Element;
+    function Group({ className, ...props }: import("../Group/Group.jsx").GroupProps & React.HTMLAttributes<HTMLElement>): JSX.Element;
 }
 export default Button;
 export { styles as buttonClasses };
@@ -27,7 +27,6 @@ export type ButtonProps = {
     disabled?: boolean | undefined;
     children?: React.ReactNode;
     fluid?: boolean | undefined;
-    icon?: React.ReactNode;
     type?: "button" | "reset" | "submit" | undefined;
     variant?: Variant | undefined;
 };

@@ -1,4 +1,4 @@
-declare function Field({ appearance, arrangement, as: Tag, className, fluid, id, label, name, onBlur, onChange, options, readOnly, required, type, variant, ...others }: FieldProps & Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange'>): JSX.Element;
+declare function Field({ appearance, arrangement, as: Tag, className, fluid, id, label, name, onBlur, onChange, options, readOnly, required, type, variant, ...others }: FieldProps & Omit<React.InputHTMLAttributes<HTMLInputElement>, "onChange">): JSX.Element;
 declare namespace Field {
     let displayName: "Form5Field";
     namespace ARRANGEMENTS {
@@ -22,7 +22,7 @@ export type FieldProps = {
     as?: import("react").ElementType<any> | undefined;
     fluid?: boolean | undefined;
     label: React.ReactNode;
-    name: HTMLInputElement['name'];
+    name: HTMLInputElement["name"];
     onBlur?: ((event: React.FocusEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => void) | undefined;
     onChange?: ((change: {
         id: string;

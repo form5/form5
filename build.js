@@ -6,9 +6,6 @@ build({
 	conditions: [
 		'development',
 	],
-	define: {
-		'process.env.NODE_ENV': '"development"',
-	},
 	entryPoints: [
 		'./demo/app.jsx',
 	],

@@ -1,7 +1,7 @@
 export function useInteractiveStates({ onDirty, onPristine, }?: {
     onDirty?: ((isDirty: true) => void) | undefined;
     onPristine?: ((isDirty: false) => void) | undefined;
-} | undefined): {
+}): {
     onBlur: (e: FocusEvent) => void;
     onChange: () => void;
     onInvalid: () => void;
@@ -9,5 +9,5 @@ export function useInteractiveStates({ onDirty, onPristine, }?: {
     pristine: "" | null;
     touched: "" | null;
 };
-export type BooleanAttribute = '' | null;
+export type BooleanAttribute = "" | null;
 //# sourceMappingURL=useInteractiveStates.d.ts.map

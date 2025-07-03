@@ -1,4 +1,4 @@
-export function generatePreview(input: URL['href'] | File): Preview | undefined;
+export function generatePreview(input: URL["href"] | File): Preview | undefined;
 export { styles as fileInputClasses };
 declare class FileInput extends PureComponent<FileInputProps & import("react").InputHTMLAttributes<HTMLInputElement>, any, any> {
     static defaultProps: {
@@ -10,7 +10,7 @@ declare class FileInput extends PureComponent<FileInputProps & import("react").I
     constructor(props: (FileInputProps & import("react").InputHTMLAttributes<HTMLInputElement>) | Readonly<FileInputProps & import("react").InputHTMLAttributes<HTMLInputElement>>);
     constructor(props: FileInputProps & import("react").InputHTMLAttributes<HTMLInputElement>, context: any);
     state: {
-        previews: Array<URL['href']>;
+        previews: Array<URL["href"]>;
     };
     handleChange: (e: any, cb: any) => void;
     componentWillUnmount(): void;
@@ -22,7 +22,7 @@ declare namespace FileInput {
 export default FileInput;
 export type Preview = {
     file: File;
-    preview?: URL['href'];
+    preview?: URL["href"];
 };
 export type React = typeof import("react");
 export type FileInputProps = {

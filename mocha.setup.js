@@ -1,4 +1,4 @@
-import chai from 'chai';
+import { expect } from 'chai';
 
 class File extends Blob {
 	#bits;
@@ -25,6 +25,6 @@ class FileList extends Array {
 	item(idx) { return this[idx] }
 }
 
-global.expect = chai.expect;
+global.expect = expect;
 global.File = File;
 global.FileList = FileList;

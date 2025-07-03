@@ -7,7 +7,7 @@ export namespace FIELD_TAGS {
 }
 export type Int = number;
 export type ComposedData = {
-    [k: string]: string | number | boolean | (string | number)[] | FileList | ComposedData | null | undefined;
+    [k: string]: Array<number | string> | boolean | FileList | number | string | null | undefined | ComposedData;
 };
 export type FieldTag = (typeof FIELD_TAGS)[keyof typeof FIELD_TAGS];
 //# sourceMappingURL=composeData.d.ts.map
