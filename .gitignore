@@ -1,1 +1,10 @@
+# Commonly ignored Node.js files
 coverage
+node_modules
+npm-debug.log
+.npm
+.env.*
+
+# macOS
+.DS_Store
+Icon[^M]
