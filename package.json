@@ -7,7 +7,7 @@
   "scripts": {
     "test:exports": "NODE_ENV=test node --no-warnings --import ./test/register.js --test-reporter=spec --test ./test/import-export.test.js",
     "test:packages": "npm run test --workspaces -- --no-warnings --experimental-test-coverage --test-reporter=spec --test-reporter-destination=stdout",
-    "test:types": "tsc --noEmit"
+    "test:types": "tsgo --noEmit"
   },
   "repository": {
     "type": "git",
@@ -18,7 +18,7 @@
   ],
   "devDependencies": {
     "@types/node": "^22.13.1",
-    "esbuild": "~0.19.0",
-    "typescript": "^5.8.2"
+    "@typescript/native-preview": "^7.0.0-dev.20250723.1",
+    "esbuild": "~0.19.0"
   }
 }

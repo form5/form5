@@ -14,10 +14,10 @@ import styles from './Field.module.css';
 export { styles as inputClasses };
 
 /**
- * @typedef {import('react')} React
- * @typedef {import('react').InputHTMLAttributes} InputHTMLAttributes
- * @typedef {import('react').SelectHTMLAttributes} SelectHTMLAttributes
- * @typedef {import('react').TextareaHTMLAttributes} TextareaHTMLAttributes
+ * @typedef {typeof import('react')} React
+ * @typedef {React.InputHTMLAttributes} InputHTMLAttributes
+ * @typedef {React.SelectHTMLAttributes} SelectHTMLAttributes
+ * @typedef {React.TextareaHTMLAttributes} TextareaHTMLAttributes
  * @typedef {import('../../common.d.ts').FormFieldElement} FormFieldElement
  */
 
@@ -36,23 +36,46 @@ export { styles as inputClasses };
  */
 
 /**
- * @template {'input' | 'select' | 'textarea'} [T='input']
- * @template [E=T extends 'input' ? HTMLInputElement : T extends 'select' ? HTMLSelectElement : T extends 'textarea' ? HTMLTextAreaElement : never]
- * @typedef {object} FieldOwnProps
- * @prop {T} [FieldOwnProps.as='input']
- * @prop {import('../Button/Button.jsx').Appearance} [FieldOwnProps.appearance=Button.APPEARANCES.PRIMARY]
- * @prop {Arrangement} [FieldOwnProps.arrangement=Field.ARRANGEMENTS.INLINE]
- * @prop {boolean} [FieldOwnProps.fluid]
- * @prop {React.ReactNode} FieldOwnProps.label
- * @prop {string} FieldOwnProps.name
- * @prop {React.FocusEventHandler<E>} [FieldOwnProps.onBlur]
- * @prop {OnChange<E>} [FieldOwnProps.onChange]
- * @prop {Record<HTMLOptionElement['value'], React.ReactNode>} [FieldOwnProps.options]
- * @prop {boolean} [FieldOwnProps.readOnly]
- * @prop {Variant} [FieldOwnProps.variant]
+ * @typedef {object} InputFieldOwnProps
+ * @prop {"input"} as
+ * @prop {HTMLInputElement["name"]} name
+ * @prop {React.FocusEventHandler<HTMLInputElement>} onBlur
+ * @prop {OnChange<HTMLInputElement>} onChange
+ *
+ * @typedef {Omit<InputHTMLAttributes, 'onChange'> & InputFieldOwnProps} InputFieldProps
+ */
+/**
+ * @typedef {object} SelectFieldOwnProps
+ * @prop {"select"} as
+ * @prop {HTMLSelectElement["name"]} name
+ * @prop {React.FocusEventHandler<HTMLSelectElement>} onBlur
+ * @prop {OnChange<HTMLSelectElement>} onChange
+ *
+ * @typedef {Omit<SelectHTMLAttributes, 'onChange'> & SelectFieldOwnProps} SelectFieldProps
+ */
+/**
+ *
+ * @typedef {object} TextAreaFieldOwnProps
+ * @prop {"textarea"} as
+ * @prop {HTMLTextAreaElement["name"]} name
+ * @prop {React.FocusEventHandler<HTMLTextAreaElement>} onBlur
+ * @prop {OnChange<HTMLTextAreaElement>} onChange
+ *
+ * @typedef {Omit<TextareaHTMLAttributes, 'onChange'> & TextAreaFieldOwnProps} TextAreaFieldProps
+ */
+/**
+ * @typedef {object} CommonFieldOwnProps
+ * @prop {"input"|"select"|"textarea"} as The element to render as.
+ * @prop {React.ReactNode} label
+ * @prop {import('../Button/Button.jsx').Appearance} [appearance=Button.APPEARANCES.PRIMARY]
+ * @prop {Arrangement} [arrangement=Field.ARRANGEMENTS.INLINE]
+ * @prop {boolean} [fluid]
+ * @prop {Record<HTMLOptionElement["value"], React.ReactNode>} [options]
+ * @prop {boolean} [readOnly]
+ * @prop {Variant} [variant]
  */
 
-/** @typedef {FieldOwnProps & (InputHTMLAttributes|SelectHTMLAttributes|TextareaHTMLAttributes)} FieldProps */
+/** @typedef {CommonFieldOwnProps & (InputFieldProps|SelectFieldProps|TextAreaFieldProps)} FieldProps */
 
 /**
  * @param {FieldProps} props
@@ -71,7 +94,7 @@ export default function Field({
 	options,
 	readOnly,
 	required,
-	// @ts-ignore it does exist and this is too much trouble
+	// @ts-expect-error Don't care if it maybe doesn't exist
 	type = 'text',
 	variant,
 	...others
@@ -96,7 +119,7 @@ export default function Field({
 		// @ts-ignore
 		...(Tag === 'textarea' && !('rows' in others) && { rows: 3 }),
 		...(Tag !== 'input' && { type: null }),
-		...(type === 'search' && !('fluid' in others) && { fluid: true }),
+		...(type === 'search' && { fluid: /** @type {''} */ ('') }),
 		...(others.value === null && { value: '' }), // React has a tantrum when `value` is `null`
 		/** @type {React.FocusEventHandler<FieldElement>} */
 		onBlur(e) {
@@ -123,6 +146,7 @@ export default function Field({
 			is.onChange(e);
 
 			let {
+				// @ts-ignore Don't care if it maybe doesn't exist
 				checked,
 				id,
 				name,

@@ -10,7 +10,7 @@ import styles from './FileInput.module.css';
 export { styles as fileInputClasses };
 
 /**
- * @typedef {import('react')} React
+ * @typedef {typeof import('react')} React
  */
 
 /**

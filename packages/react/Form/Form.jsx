@@ -14,7 +14,7 @@ import styles from './Form.module.css';
 export { styles as formClasses };
 
 /**
- * @typedef {import('react')} React
+ * @typedef {typeof import('react')} React
  * @typedef {import('@form5/utils/composeData').ComposedData} ComposedData
  * @typedef {import('../../common.d.ts').FormFieldElement} FormFieldElement
  * @typedef {React.FormEvent<HTMLFormElement>} SubmitEvent

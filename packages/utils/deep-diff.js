@@ -9,7 +9,7 @@ import _isObject from 'lodash-es/isObject.js';
  */
 /**
  * @param {*} oldVals
- * @param {*} newVals
+ * @param {*} [newVals]
  * @param {Record<string, any>} delta
  * @returns {ComposedData | Array<number | string>} The delta—the difference between old and new. When an old field is absent
  * in new, the old field is set to `null`.

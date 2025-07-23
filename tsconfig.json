@@ -9,10 +9,11 @@
     "emitDeclarationOnly": true,
     "esModuleInterop": true,
     "jsx": "preserve",
-    "lib": ["DOM", "DOM.Iterable"],
+    "lib": ["DOM", "DOM.Iterable", "ESNext"],
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
     // "rewriteRelativeImportExtensions": true,
+    "skipLibCheck": true,
     "target": "ESNext"
   },
   "include": ["./packages"],

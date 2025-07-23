@@ -8,7 +8,7 @@ import styles from './Button.module.css';
 export { styles as buttonClasses };
 
 /**
- * @typedef {import('react')} React
+ * @typedef {typeof import('react')} React
  */
 
 /**

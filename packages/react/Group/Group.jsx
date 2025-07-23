@@ -6,7 +6,7 @@ import styles from './Group.module.css';
 export { styles as grouptClasses };
 
 /**
- * @typedef {import('react')} React
+ * @typedef {typeof import('react')} React
  */
 
 /**
