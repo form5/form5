@@ -53,20 +53,17 @@ jobs:
       - name: npm clean install
         run: npm ci
 
-      - name: test exports
+      - name: Test exports
         run: node --run test:exports
-        continue-on-error: true       # Continue to see all the issues
-      - name: test packages
+      - name: Test packages
         run: >-
           node
           --run test:packages
           --test-coverage-lines=0.8
           --test-reporter=lcov
           --test-reporter-destination=./coverage.lcov
-        continue-on-error: true       # Continue to see all the issues
-      - name: check types
+      - name: Check types
         run: node --run test:types
-        continue-on-error: true       # Continue to see all the issues
 
       - name: Publish coverage to Coveralls ${{ matrix.test_number }}
         id: coveralls-publish
