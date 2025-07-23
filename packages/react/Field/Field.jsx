@@ -1,0 +1,309 @@
+import { clsx } from 'clsx';
+import _isEmpty from 'lodash-es/isEmpty.js';
+import _map from 'lodash-es/map.js';
+import { useState } from 'react';
+
+import { useInteractiveStates } from '../use-interactive-states/use-interactive-states.js';
+
+import Button from '../Button/Button.jsx';
+import buttonStyles from '../Button/Button.module.css';
+
+import styles from './Field.module.css';
+
+
+export { styles as inputClasses };
+
+/**
+ * @typedef {typeof import('react')} React
+ * @typedef {React.InputHTMLAttributes} InputHTMLAttributes
+ * @typedef {React.SelectHTMLAttributes} SelectHTMLAttributes
+ * @typedef {React.TextareaHTMLAttributes} TextareaHTMLAttributes
+ * @typedef {import('../../common.d.ts').FormFieldElement} FormFieldElement
+ */
+
+/**
+ * @typedef {object} Change
+ * @prop {string} id
+ * @prop {string} name
+ * @prop {boolean | number | string} value
+ */
+/**
+ * @template E
+ * @callback OnChange
+ * @param {Change} change
+ * @param {React.ChangeEvent<E>} event
+ * @returns {void}
+ */
+
+/**
+ * @typedef {object} InputFieldOwnProps
+ * @prop {"input"} as
+ * @prop {HTMLInputElement["name"]} name
+ * @prop {React.FocusEventHandler<HTMLInputElement>} onBlur
+ * @prop {OnChange<HTMLInputElement>} onChange
+ *
+ * @typedef {Omit<InputHTMLAttributes, 'onChange'> & InputFieldOwnProps} InputFieldProps
+ */
+/**
+ * @typedef {object} SelectFieldOwnProps
+ * @prop {"select"} as
+ * @prop {HTMLSelectElement["name"]} name
+ * @prop {React.FocusEventHandler<HTMLSelectElement>} onBlur
+ * @prop {OnChange<HTMLSelectElement>} onChange
+ *
+ * @typedef {Omit<SelectHTMLAttributes, 'onChange'> & SelectFieldOwnProps} SelectFieldProps
+ */
+/**
+ *
+ * @typedef {object} TextAreaFieldOwnProps
+ * @prop {"textarea"} as
+ * @prop {HTMLTextAreaElement["name"]} name
+ * @prop {React.FocusEventHandler<HTMLTextAreaElement>} onBlur
+ * @prop {OnChange<HTMLTextAreaElement>} onChange
+ *
+ * @typedef {Omit<TextareaHTMLAttributes, 'onChange'> & TextAreaFieldOwnProps} TextAreaFieldProps
+ */
+/**
+ * @typedef {object} CommonFieldOwnProps
+ * @prop {"input"|"select"|"textarea"} as The element to render as.
+ * @prop {React.ReactNode} label
+ * @prop {import('../Button/Button.jsx').Appearance} [appearance=Button.APPEARANCES.PRIMARY]
+ * @prop {Arrangement} [arrangement=Field.ARRANGEMENTS.INLINE]
+ * @prop {boolean} [fluid]
+ * @prop {Record<HTMLOptionElement["value"], React.ReactNode>} [options]
+ * @prop {boolean} [readOnly]
+ * @prop {Variant} [variant]
+ */
+
+/** @typedef {CommonFieldOwnProps & (InputFieldProps|SelectFieldProps|TextAreaFieldProps)} FieldProps */
+
+/**
+ * @param {FieldProps} props
+ */
+export default function Field({
+	appearance = Button.APPEARANCES.PRIMARY,
+	arrangement = Field.ARRANGEMENTS.INLINE,
+	as: Tag = 'input',
+	className,
+	fluid,
+	id,
+	label,
+	name,
+	onBlur,
+	onChange,
+	options,
+	readOnly,
+	required,
+	// @ts-expect-error Don't care if it maybe doesn't exist
+	type = 'text',
+	variant,
+	...others
+}) {
+	const [error, setError] = useState('');
+	const {
+		pristine,
+		touched,
+		...is
+	} = useInteractiveStates();
+	const isInvalid = !!error;
+
+	id ||= name;
+
+	/**
+	 * @typedef {FieldProps['as'] extends 'input' ? HTMLInputElement : FieldProps['as'] extends 'select' ? HTMLSelectElement : HTMLTextAreaElement} FieldElement
+	 */
+
+	const props = {
+		...others,
+		...(options && { list: `${name}_options` }),
+		// @ts-ignore
+		...(Tag === 'textarea' && !('rows' in others) && { rows: 3 }),
+		...(Tag !== 'input' && { type: null }),
+		...(type === 'search' && { fluid: /** @type {''} */ ('') }),
+		...(others.value === null && { value: '' }), // React has a tantrum when `value` is `null`
+		/** @type {React.FocusEventHandler<FieldElement>} */
+		onBlur(e) {
+			if (readOnly) return;
+
+			is.onBlur(e);
+
+			onBlur?.(e);
+
+			if (e.target.checkValidity()) setError('');
+		},
+		/** @type {React.ChangeEventHandler<FieldElement>} */
+		onChange(e) {
+			if (readOnly) {
+				// ! Contrary to what anyone would want, `readonly` does NOT affect checkboxes or radio buttons
+				// ! because `readonly` prevents `value` being changed, and they use `checked` not `value`.
+				e.preventDefault();
+				// These stop*Propagations are necessary to prevent <Form> pristine/touched being updated
+				e.stopPropagation(); // Prevent other handlers registered via React being called
+				e.nativeEvent.stopImmediatePropagation(); // Prevent other handlers registered not via React being called
+				return;
+			}
+
+			is.onChange(e);
+
+			let {
+				// @ts-ignore Don't care if it maybe doesn't exist
+				checked,
+				id,
+				name,
+				type,
+			} = e.target;
+			const value = type === 'checkbox'
+				? checked
+				: ''+(options?.[e.target.value] ?? e.target.value);
+
+			onChange?.({
+				id,
+				name,
+				value,
+			}, e);
+
+			if (isInvalid && e.target.checkValidity()) setError('');
+		},
+	};
+
+	// @ts-ignore `has` is specifically checking whether it's applicable 🙄
+	const isButton = buttonVariants.has(variant);
+	const isSwitch = switchTypes.has(type);
+	const isSearch = type === "search";
+
+	if (isSearch) arrangement = Field.ARRANGEMENTS.COMPACT;
+
+	return (
+		<div
+			arrangement={arrangement}
+			className={clsx(
+				styles.FieldContainer,
+				{
+					[styles.Fluid]: fluid,
+					[buttonStyles.Button]: isButton,
+				},
+			)}
+			pristine={pristine}
+			switch={isSwitch ? '' : null}
+			touched={touched}
+			{...isButton && {
+				variant,
+			}}
+		>
+			<Tag
+				className={clsx(styles.Field, className)}
+				name={name}
+				id={id}
+				onInvalid={(e) => {
+					e.nativeEvent.stopImmediatePropagation();
+					setError(e.currentTarget.validationMessage);
+					is.onInvalid(e);
+				}}
+				readOnly={readOnly}
+				required={required}
+				type={type}
+				variant={variant}
+				{...props}
+			/>
+
+			{isSearch && (
+				<>
+					<Button
+						appearance={Button.APPEARANCES.BASIC}
+						className={styles.SearchSubmit}
+						disabled={props.disabled}
+						readOnly={readOnly}
+						type={Button.TYPES.SUBMIT}
+						variant={Button.VARIANTS.GLYPH}
+					>
+						<svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16" style={{ height: "0.8em" }}><path d="M6.663 0C2.991 0 0 2.991 0 6.663s2.991 6.663 6.663 6.663a6.628 6.628 0 0 0 4.213-1.508l3.978 3.979a.667.667 0 1 0 .943-.943l-3.978-3.978a6.628 6.628 0 0 0 1.507-4.213C13.326 2.991 10.336 0 6.663 0Zm0 1.333a5.32 5.32 0 0 1 5.33 5.33 5.32 5.32 0 0 1-5.33 5.33 5.32 5.32 0 0 1-5.33-5.33 5.32 5.32 0 0 1 5.33-5.33Z"/></svg>
+					</Button>
+
+					<Button
+						appearance={Button.APPEARANCES.BASIC}
+						className={styles.SearchReset}
+						disabled={props.disabled}
+						readOnly={readOnly}
+						type={Button.TYPES.RESET}
+						variant={Button.VARIANTS.GLYPH}
+					>
+						<svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16" style={{ height: "0.8em" }}><path d="M13.162 2.326a.5.5 0 0 0-.349.154L8 7.293 3.187 2.48a.5.5 0 1 0-.707.707L7.293 8 2.48 12.813a.499.499 0 1 0 .707.707L8 8.707l4.813 4.813a.5.5 0 1 0 .707-.707L8.707 8l4.813-4.813a.5.5 0 0 0-.358-.86Z"/></svg>
+					</Button>
+				</>
+			)}
+
+			{(!!label || isInvalid) && (
+				<div className={styles.InnerWrapper}>
+					{!!label && (
+						<label
+							className={clsx(styles.Label, {
+								[buttonStyles.Button]: isButton,
+							})}
+							htmlFor={id}
+							{...isButton && {
+								appearance,
+								variant,
+							}}
+						>
+							{label}
+						</label>
+					)}
+
+					{isInvalid && (
+						<dialog
+							className={styles.Error}
+							data-testid="field-error"
+							open
+						>
+							{error}
+						</dialog>
+					)}
+				</div>
+			)}
+
+			{!_isEmpty(options) && (
+				<datalist data-testid={props.list} id={props.list}>{_map(options, (label, key) => (
+					<option key={key} value={key}>{label}</option>
+				))}</datalist>
+			)}
+		</div>
+	);
+};
+
+Field.displayName = /** @type {const} */ ('Form5Field');
+
+/**
+ * @typedef {typeof Field.ARRANGEMENTS[keyof typeof Field.ARRANGEMENTS]} Arrangement
+ */
+Field.ARRANGEMENTS = /** @type {const} */ ({
+	COMPACT: 'compact',
+	INLINE: 'inline',
+	STACKED: 'stacked',
+	STAND_ALONE: 'stand-alone',
+});
+/**
+ * @typedef {typeof Field.VARIANTS[keyof typeof Field.VARIANTS]} Variant
+ */
+Field.VARIANTS = /** @type {const} */ ({
+	CTA: Button.VARIANTS.CTA,
+	GLYPH: Button.VARIANTS.GLYPH,
+	TOGGLE: 'toggle',
+});
+
+const dtTypes = new Set([
+	'date',
+	'datetime',
+	'datetime-local',
+	'time',
+]);
+
+const buttonVariants = new Set([
+	Field.VARIANTS.CTA,
+	Field.VARIANTS.GLYPH,
+]);
+
+const switchTypes = new Set([
+	'checkbox',
+	'color',
+	'radio',
+]);

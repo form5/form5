@@ -1,28 +1,21 @@
 {
   "compilerOptions": {
+    "allowArbitraryExtensions": true,
+    "allowImportingTsExtensions": true,
     "allowJs": true,
-    "alwaysStrict": true,
-    "baseUrl": "./lib",
+    "checkJs": true,
     "declaration": true,
     "declarationMap": true,
     "emitDeclarationOnly": true,
+    "esModuleInterop": true,
     "jsx": "preserve",
-    "lib": ["ESNext", "DOM"],
+    "lib": ["DOM", "DOM.Iterable", "ESNext"],
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
-    "noImplicitThis": true,
-    "removeComments": true,
-    "strict": true,
-    "stripInternal": true,
-    "target": "esnext",
+    // "rewriteRelativeImportExtensions": true,
+    "skipLibCheck": true,
+    "target": "ESNext"
   },
-  "include": ["lib"],
-  "exclude": [
-    "node_modules",
-    "./node_modules",
-    "**/*.fixture.js",
-    "**/*.mock.js",
-    "**/*.spec.js",
-    "**/*.test.jsx"
-  ],
+  "include": ["./packages"],
+  "exclude": ["**/*.spec.*s", "**/*.test.*sx", "**/*.fixture.*s"],
 }

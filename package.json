@@ -1,112 +1,24 @@
 {
   "name": "form5",
-  "version": "3.2.4",
-  "description": "A set of mostly unopinionated react components leveraging native APIs; supports controlled and uncontrolled state.",
-  "type": "module",
-  "files": [
-    "./lib/**/*"
-  ],
-  "exports": {
-    "./composeData": {
-      "import": "./lib/composeData.js",
-      "types": "./lib/composeData.d.ts"
-    },
-    "./deepDiff": {
-      "import": "./lib/deepDiff.js",
-      "types": "./lib/deepDiff.d.ts"
-    },
-    "./package.json": {
-      "import": "./package.json",
-      "types": "./package.d.ts"
-    },
-    "./react": {
-      "import": "./lib/react/barrel.js",
-      "types": "./lib/react/barrel.d.ts"
-    },
-    "./react/Button": {
-      "import": "./lib/react/Button/Button.jsx",
-      "types": "./lib/react/Button/Button.d.ts"
-    },
-    "./react/Field": {
-      "import": "./lib/react/Field/Field.jsx",
-      "types": "./lib/react/Field/Field.d.ts"
-    },
-    "./react/FileInput": {
-      "import": "./lib/react/FileInput/FileInput.jsx",
-      "types": "./lib/react/FileInput/FileInput.d.ts"
-    },
-    "./react/Form": {
-      "import": "./lib/react/Form/Form.jsx",
-      "types": "./lib/react/Form/Form.d.ts"
-    }
-  },
-  "scripts": {
-    "build:demo": "rm -rf ./demo/build/* && node ./build.js",
-    "build:types": "find ./lib -name '*.d.ts' -delete && find ./lib -name '*.d.ts.map' -delete && tsc --project ./tsconfig.json",
-    "preversion": "npm run test:coverage",
-    "test": "c8 --check-coverage concurrently --kill-others-on-fail --prefix none npm:test:*",
-    "test:node": "NODE_ENV=test NODE_OPTIONS='--no-warnings --loader=nodejs-loaders/dev/tsx --loader=nodejs-loaders/testing/css-module --test-reporter=spec' node ./node.test.mjs",
-    "test:unit": "NODE_ENV=test NODE_OPTIONS='--no-warnings --loader=nodejs-loaders/dev/tsx --loader=nodejs-loaders/testing/css-module' mocha --extension '.spec.js' './lib'",
-    "test:ui": "NODE_ENV=test NODE_OPTIONS='--no-warnings --loader=nodejs-loaders/dev/tsx --loader=nodejs-loaders/testing/css-module' mocha --extension '.test.jsx' -require global-jsdom/register './lib'"
-  },
-  "repository": "github:JakobJingleheimer/react-form5",
-  "keywords": [
-    "a11y",
-    "constraints validation api",
-    "forms",
-    "jsx",
-    "react"
-  ],
+  "description": "A set of mostly unopinionated utilities and react components leveraging native APIs.",
   "author": "Jacob Smith",
   "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/JakobJingleheimer/react-form5/issues"
+  "type": "module",
+  "scripts": {
+    "test:exports": "NODE_ENV=test node --no-warnings --import ./test/register.js --test-reporter=spec --test ./test/import-export.test.js",
+    "test:packages": "npm run test --workspaces -- --no-warnings --experimental-test-coverage --test-reporter=spec --test-reporter-destination=stdout",
+    "test:types": "tsgo --noEmit"
   },
-  "homepage": "https://github.com/JakobJingleheimer/react-form5#readme",
-  "dependencies": {
-    "lodash-es": "^4.17.21"
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/form5/form5.git"
   },
-  "peerDependencies": {
-    "clsx": "*",
-    "react": "17 - 18",
-    "react-dom": "17 - 18"
-  },
+  "workspaces": [
+    "./packages/*"
+  ],
   "devDependencies": {
-    "@testing-library/react": "^14.0.0",
-    "c8": "^7.14.0",
-    "chai": "^4.3.7",
-    "clsx": "*",
-    "concurrently": "^8.1.0",
-    "css-parse": "^2.0.0",
-    "esbuild": "^0.19.5",
-    "esbuild-css-modules-plugin": "^2.7.1",
-    "global-jsdom": "^9.0.1",
-    "jsdom": "^22.1.0",
-    "mocha": "^10.2.0",
-    "nodejs-loaders": "github:JakobJingleheimer/nodejs-loaders",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "reset.css": "^2.0.2",
-    "typescript": "^5.2.2"
-  },
-  "engines": {
-    "node": ">=18.6.0"
-  },
-  "c8": {
-    "branches": 95,
-    "exclude": [
-      "loaders/*",
-      "*.setup.*",
-      "**/*.fixture.js",
-      "**/*.spec.{js,cjs,mjs,ts,tsx,jsx}",
-      "**/*.test.{js,cjs,mjs,ts,tsx,jsx}"
-    ]
-  },
-  "mocha": {
-    "file": [
-      "./mocha.setup.js"
-    ],
-    "inline-diffs": false,
-    "recursive": true
+    "@types/node": "^22.13.1",
+    "@typescript/native-preview": "^7.0.0-dev.20250723.1",
+    "esbuild": "~0.19.0"
   }
 }

@@ -1,0 +1,96 @@
+# yaml-language-server: $schema=https://json.schemastore.org/github-workflow.json
+
+# This workflow is about project code.
+# It will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
+
+name: CI
+
+on:
+  push:
+    branches: ["main"]
+    paths:
+      - ".github"
+      - "packages/**"
+      - "package.json"
+      - "package-lock.json"
+  pull_request:
+    branches: ["main"]
+    paths:
+      - ".github"
+      - "packages/**"
+      - "package.json"
+      - "package-lock.json"
+    types:
+      - opened
+      - ready_for_review
+      - reopened
+      - synchronize
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    # if: github.event.pull_request.draft == false
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@cb605e52c26070c328afc4562f0b4ada7618a84e # v2.10.4
+        with:
+          egress-policy: audit
+
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Use Node.js
+        uses: actions/setup-node@1d0ff469b7ec7b3cb9d8673fde0c81c44821de2a # v4.2.0
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'npm'
+
+      - name: npm clean install
+        run: npm ci
+
+      - name: Test exports
+        run: node --run test:exports
+      - name: Test packages
+        run: >-
+          node
+          --run test:packages
+          --test-coverage-lines=0.8
+          --test-reporter=lcov
+          --test-reporter-destination=./coverage.lcov
+      - name: Check types
+        run: node --run test:types
+
+      - name: Publish coverage to Coveralls ${{ matrix.test_number }}
+        id: coveralls-publish
+        # Skip for now because node's CLI test config is effed
+        if: false
+        uses: coverallsapp/github-action@648a8eb78e6d50909eff900e4ec85cab4524a45b # v2.3.6
+        with:
+          flag-name: run-${{ join(matrix.*, '-') }}
+          file: ./coverage.lcov
+          format: lcov
+          parallel: true
+
+  post-test-harden:
+    name: Post-test harden
+    needs: test
+    if: ${{ success() }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@cb605e52c26070c328afc4562f0b4ada7618a84e # v2.10.4
+        with:
+          egress-policy: audit
+
+      - name: Coveralls Finished
+        # Skip for now because node's CLI test config is effed
+        if: false
+        uses: coverallsapp/github-action@648a8eb78e6d50909eff900e4ec85cab4524a45b # v2.3.6
+        with:
+          parallel-finished: true
+          carryforward: "run-1,run-2"
