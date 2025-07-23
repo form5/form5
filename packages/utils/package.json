@@ -33,7 +33,7 @@
     "./package.json": "./package.json"
   },
   "scripts": {
-    "test": "NODE_ENV=test node --no-warnings --import ../../test/globals.mock.js --test --test-coverage-include='*.js' --test-coverage-exclude='*.spec.js' '*.spec.js'"
+    "test": "NODE_ENV=test node --no-warnings --import ../../test/globals.mock.js --test-coverage-include='*.js' --test-coverage-exclude='*.spec.js' --test '*.spec.js'"
   },
   "dependencies": {
     "lodash-es": "^4.17.21"
