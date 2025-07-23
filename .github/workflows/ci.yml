@@ -69,6 +69,9 @@ jobs:
         continue-on-error: true       # Continue to see all the issues
 
       - name: Publish coverage to Coveralls ${{ matrix.test_number }}
+        id: coveralls-publish
+        # Skip for now because node's CLI test config is effed
+        if: false
         uses: coverallsapp/github-action@648a8eb78e6d50909eff900e4ec85cab4524a45b # v2.3.6
         with:
           flag-name: run-${{ join(matrix.*, '-') }}
@@ -76,7 +79,8 @@ jobs:
           format: lcov
           parallel: true
 
-  post-test:
+  post-test-harden:
+    name: Post-test harden
     needs: test
     if: ${{ success() }}
     runs-on: ubuntu-latest
@@ -87,6 +91,8 @@ jobs:
           egress-policy: audit
 
       - name: Coveralls Finished
+        # Skip for now because node's CLI test config is effed
+        if: false
         uses: coverallsapp/github-action@648a8eb78e6d50909eff900e4ec85cab4524a45b # v2.3.6
         with:
           parallel-finished: true
