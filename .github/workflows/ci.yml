@@ -55,7 +55,12 @@ jobs:
 
       - run: node --run test:exports
         continue-on-error: true       # Continue to see all the issues
-      - run: node --run test:packages
+      - run: >-
+          node
+          --run test:packages
+          --test-coverage-lines=0.8
+          --test-reporter-destination=./coverage.lcov
+          --test-reporter=lcov
         continue-on-error: true       # Continue to see all the issues
       - run: node --run test:types
         continue-on-error: true       # Continue to see all the issues
